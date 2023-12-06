@@ -29,21 +29,24 @@ int possible(string& line, int red, int green, int blue) {
 	int gameId = stoi(line.substr(5, line.find(":") - 2));
 
 	string results = line.substr(line.find(":") + 2, line.size() - (line.find(":") + 2));
-
-	vector<string> rounds = split(results, ';');
+    
+    // find the max occurring number for each color in every round
+    int maxR = 0;
+    int maxG = 0;
+    int maxB = 0;
+	
+    vector<string> rounds = split(results, ';');
 	for(const auto& round : rounds) {
 		vector<string> colors = split(round, ',');
 		for(const auto& color : colors) {
 			// split each color into int and string
 			int p = findAlpha(color);
-			int num = stoi(color.substr(0, p));
-			cout << num <<  " " << color[p] << endl;
-			if(color[p] == 'r' && num > red) return 0;
-			if(color[p] == 'g' && num > green) return 0;
-			if(color[p] == 'b' && num > blue) return 0;
+			if(color[p] == 'r') maxR = max(maxR, num);
+			if(color[p] == 'g') maxG = max(maxG, num);
+			if(color[p] == 'b') maxB = max(maxB, num);
 		}
 	}
-	return gameId;
+	return maxR * maxG * maxB;
 }
 
 
@@ -61,11 +64,9 @@ int main() {
 
 	cout << "Enter Blue: ";
 	cin >> blue;
-
 	int sum = 0;
 	if(file.is_open()) {
 		while(getline(file, line)) {
-			// call function to see if game is possible, add add to sum 
 			sum += possible(line, red, green, blue);
 		}
 		file.close();
